@@ -1,7 +1,8 @@
 
 
 🔐🔥 Introducing Egy-Crack - The Ultimate Ethereum Address Generator! 🔥🔐
-![image](https://github.com/dragonked2/Egy-Crack/assets/66541902/4738bf1e-9561-4cec-8cdd-beaa4103c412)
+
+![image](https://github.com/dragonked2/Egy-Crack/assets/66541902/0c426890-43ea-4d7f-a40c-6d72cd42f1a0)
 
 
 Are you on the hunt for a powerful tool to generate Ethereum addresses with lightning speed? Look no further! Egy-Crack is here to revolutionize your Ethereum address generation process and unleash new possibilities for you!
