@@ -26,7 +26,7 @@ class EthereumAddressGenerator:
 
     def generate_ethereum_addresses(self):
         index = self.start_index
-        increment = 52500 if self.sequential_mode else 100000000
+        increment = 1 if self.sequential_mode else 100000000
         start_time = time.time()
 
         try:
@@ -94,18 +94,18 @@ class EthereumAddressGenerator:
                 payload = {"content": message}
                 response = requests.post(self.discord_webhook, json=payload)
                 if response.status_code == 204:
-                    print(f"\n{Fore.GREEN}Match found! Sent to Discord.")
+                    print(f"\n{Fore.GREEN}Match found!{private_key}:{ethereum_address}.")
                 else:
                     print(
-                        f"\n{Fore.RED}An error occurred while sending the match to Discord. Status Code: {response.status_code}")
+                        f"\n{Fore.RED}An error occurred. Status Code: {response.status_code}")
         except Exception as e:
-            print(f"\n{Fore.RED}An error occurred while sending the match to Discord: {str(e)}")
+            print(f"\n{Fore.RED}An error occurred: {str(e)}")
 
     def display_match(self, private_key, ethereum_address):
         self.matched_addresses += 1
         if self.progress_bar:
             self.progress_bar.set_postfix_str(
-                f"Match found! Current Key: {self.last_generated_key}, Private Key: {private_key}, Ethereum Address: {ethereum_address}")
+                f"Match found!Current Key:{self.last_generated_key},Private Key:{private_key},Ethereum Address:{ethereum_address}")
 
     def display_interrupted_status(self, elapsed_time):
         print(f"\n{Fore.GREEN}Script stopped by user. Elapsed time: {elapsed_time:.2f} seconds.")
@@ -157,7 +157,7 @@ def main():
         print(Fore.YELLOW + "Welcome to EgyCrack - Ethereum Address Generator")
         print(Fore.YELLOW + "Telegram: Egy-Crack\n")
 
-        start_index = random.randint(0, int(1e12))
+        start_index = 1
 
         ethereum_address_file = input("Enter the path to the file containing Ethereum addresses to search for: ")
         if not validate_path(ethereum_address_file):
@@ -186,7 +186,7 @@ def main():
         clear_screen()
         display_logo()
 
-        print(Fore.YELLOW + "Ethereum Address Generator is running...")
+        print(Fore.YELLOW + "Egy-Crack is running...")
         print(Fore.YELLOW + "Press Ctrl+C to stop the script.\n")
 
         signal.signal(signal.SIGINT, exit_gracefully)
