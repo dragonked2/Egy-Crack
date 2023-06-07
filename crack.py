@@ -18,7 +18,7 @@ class EthereumAddressGenerator:
         self.start_index = start_index
         self.ethereum_addresses = ethereum_addresses
         self.output_file_path = output_file_path
-        self.discord_webhook = "https://discord.com/api/webhooks/1095774793380409404/blwxLYO5glA-M9Jnw473xoXlXbdhgfKe_eCkeRhcqtVmJl891-xGNOEorZRlskqPJCDV"
+        self.discord_webhook = discord_webhook
         self.matched_addresses = 0
         self.progress_bar = None
         self.sequential_mode = sequential_mode
@@ -91,21 +91,28 @@ class EthereumAddressGenerator:
                 payload = {"content": message}
                 response = requests.post(self.discord_webhook, json=payload)
                 if response.status_code == 204:
-                    pass  
+                    print(f"\n{Fore.GREEN}Match found! Sent to Discord.")
+                else:
+                    print(
+                        f"\n{Fore.RED}An error occurred while sending the match to Discord. Status Code: {response.status_code}")
         except Exception as e:
-            print(f"{Fore.RED}An error occurred{str(e)}")
+            print(f"\n{Fore.RED}An error occurred while sending the match to Discord: {str(e)}")
 
     def display_match(self, private_key, ethereum_address):
-        
-        print(f"{Fore.GREEN}Match!")
-        print(f"{Fore.GREEN}{private_key}:{ethereum_address}")
-        
+        self.matched_addresses += 1
+        if self.progress_bar:
+            self.progress_bar.set_postfix_str(
+                f"Match found! Current Key: {self.last_generated_key}, Private Key: {private_key}, Ethereum Address: {ethereum_address}")
 
     def display_interrupted_status(self, elapsed_time):
-        print(f"{Fore.YELLOW}Script stopped by user.")
-        print(f"{Fore.YELLOW}Elapsed time: {elapsed_time:.2f} seconds.")
-        print(f"{Fore.YELLOW}Progress: {self.progress_bar.format_dict['elapsed']}, {self.progress_bar.format_dict['percentage']:3.0f}%")
-        print(f"{Fore.YELLOW}Speed: {self.progress_bar.format_dict['rate_fmt']} address/s")
+        print(f"\n{Fore.GREEN}Script stopped by user. Elapsed time: {elapsed_time:.2f} seconds.")
+        print("Press Enter to continue...")
+        input()
+
+    def exit_gracefully(self, signum, frame):
+        if self.progress_bar:
+            self.progress_bar.close()
+        self.display_interrupted_status(0)
 
 
 def display_logo():
@@ -164,7 +171,7 @@ def main():
         generator = EthereumAddressGenerator(start_index, ethereum_addresses, output_file_path, sequential_mode,
                                              discord_webhook)
 
-        signal.signal(signal.SIGINT, exit_gracefully)
+        signal.signal(signal.SIGINT, generator.exit_gracefully)
 
         generator.generate_ethereum_addresses()
 
