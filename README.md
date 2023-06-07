@@ -30,3 +30,5 @@ Are you on the hunt for a powerful tool to generate Ethereum addresses with ligh
 Note: Ensure you have the necessary permissions and abide by ethical guidelines when using Egy-Crack.
 
 Supercharge your Ethereum address generation journey with Egy-Crack. Unleash its power, seize the opportunities, and embark on your Ethereum adventures like never before! 💪💎
+
+Donations : 0x863da586e8efc38db582161dcd3153840d71b5ec
