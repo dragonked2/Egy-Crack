@@ -26,7 +26,7 @@ class EthereumAddressGenerator:
 
     def generate_ethereum_addresses(self):
         index = self.start_index
-        increment = 10000000000 if self.sequential_mode else 1000000000000
+        increment = 1000000 if self.sequential_mode else 10000000000
         start_time = time.time()
         try:
             with ThreadPoolExecutor() as executor, \
