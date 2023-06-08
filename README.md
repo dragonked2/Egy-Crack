@@ -1,70 +1,72 @@
-
-
-
-![image](https://github.com/dragonked2/Egy-Crack/assets/66541902/a41eb10b-e5d5-4aec-93a3-ba7aca3912aa)
 Egy-Crack
+Certainly! Here's an updated version of the README.md file, including the "Add Star" function and a donation button for your Ethereum address, all in one frame:
 
-Unlock the power of Ethereum with Egy-Crack! 🚀
+```markdown
+# Egy-Crack
 
-🔐🔥 Introducing Egy-Crack - The Ultimate Ethereum Address Generator! 🔥🔐
+[![GitHub stars](https://github.com/dragonked2/Egy-Crack)
 
-Egy-Crack is a powerful Ethereum address generator that allows you to generate Ethereum addresses with ease. Whether you're exploring the blockchain or searching for specific addresses, Egy-Crack has got you covered.
-Key Features
+![image](https://github.com/dragonked2/Egy-Crack/assets/66541902/a6efa8c7-64e2-460e-b97c-4c3879e60bbc)
 
-    Fast and efficient Ethereum address generation
-    Sequential or random private key generation modes
-    Discord integration for real-time notifications
-    Progress tracking with a user-friendly interface
-    Match detection and output to file for easy management
+Egy-Crack is a powerful Ethereum address generator that allows you to generate Ethereum addresses and check for matches against a provided list of addresses. It is designed to be fast, efficient, and easy to use.
 
-Installation
+## Features
 
-    Clone the Egy-Crack repository:
+- Generate Ethereum addresses from private keys
+- Check for matches against a list of Ethereum addresses
+- Sequential or random mode for private key generation
+- Discord webhook integration for real-time notifications
+- Progress tracking with a user-friendly progress bar
+- Outputs matches to a file for easy reference
 
-    shell
+## Installation
 
-git clone https://github.com/dragonked2/Egy-Crack.git
+1. Clone the repository:
 
-Navigate to the project directory:
+   ```shell
+   git clone https://github.com/dragonked2/Egy-Crack.git
+   ```
 
-shell
+2. Navigate to the project directory:
 
-cd Egy-Crack
+   ```shell
+   cd Egy-Crack
+   ```
 
-Install the required dependencies using pip:
+3. Install the required dependencies:
 
-shell
+   ```shell
+   pip install -r requirements.txt
+   ```
 
-    pip install -r requirements.txt
+## Usage
 
-    Set up your Discord webhook URL (optional):
+1. Update the `success.txt` file with the list of Ethereum addresses you want to check against.
 
-Usage
+2. Run the script with the following command:
 
-    Prepare a file with Ethereum addresses:
-        Create a text file containing the Ethereum addresses you want to search for.
-        Each address should be on a separate line.
+   ```shell
+   python crack.py
+   ```
 
-    Run the Egy-Crack script:
+   The script will start generating Ethereum addresses and checking for matches. Matches will be displayed in the console and saved to the `matches.txt` file.
 
-    shell
+3. Monitor the progress with the progress bar and receive real-time notifications through the configured Discord webhook.
 
-    python crack.py
+## How to Contribute
 
-    Follow the on-screen instructions:
-        Enter the starting index for private key generation.
-        Provide the path to the Ethereum addresses file.
-        Specify the output file path for matched addresses.
+If you find Egy-Crack useful and want to contribute to its development, you can do so in the following ways:
 
-    Select the mode:
-        Sequential mode: Generate Ethereum addresses in sequential order.
-        Random mode: Generate Ethereum addresses randomly.
+- Click the :star: Star button at the top of the repository page to show your support and increase the project's visibility.
 
-    Sit back and relax:
-        Egy-Crack will generate Ethereum addresses and search for matches.
-        Any matches found will be displayed and saved to the output file.
-        If a Discord webhook URL is provided, real-time notifications will be sent for each match.
+- Open issues to report bugs, suggest new features, or provide feedback. Your input is valuable and can help improve the project.
 
-Unlock the potential of Ethereum with Egy-Crack! Start generating Ethereum addresses and uncover hidden treasures on the blockchain today.
+- Submit pull requests with code enhancements, bug fixes, or new features. Your contributions are greatly appreciated.
 
-Donations : 0x863da586e8efc38db582161dcd3153840d71b5ec
+## Donation
+
+If you find Egy-Crack helpful and would like to support its development, you can make a donation to the following Ethereum address:
+
+Ethereum Address: [0x863da586e8efc38db582161dcd3153840d71b5ec](https://etherscan.io/address/0x863da586e8efc38db582161dcd3153840d71b5ec)
+
+Your donations help to keep the project active and contribute to its ongoing maintenance and improvements. Thank you for your support!
