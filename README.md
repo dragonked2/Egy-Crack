@@ -47,6 +47,7 @@ Egy-Crack is a powerful Ethereum address generator that allows you to generate E
    The script will start generating Ethereum addresses and checking for matches. Matches will be displayed in the console and saved to the `matches.txt` file.
 
 3. Monitor the progress with the progress bar and receive real-time notifications through the configured Discord webhook.
+![image](https://github.com/dragonked2/Egy-Crack/assets/66541902/cf66786e-23c4-432c-a870-d438d07711ee)
 
 ## How to Contribute
 
