@@ -1,0 +1,5 @@
+coincurve==15.0.0
+pycryptodome==3.11.0
+requests==2.26.0
+tqdm==4.62.3
+colorama==0.4.4
