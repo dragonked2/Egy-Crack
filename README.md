@@ -1,9 +1,8 @@
 Egy-Crack
-```markdown
+
+![image](https://github.com/dragonked2/Egy-Crack/assets/66541902/a47b8748-583a-4f7d-8bb6-d7a2265b2365)
+
 # Egy-Crack
-
-![image](https://github.com/dragonked2/Egy-Crack/assets/66541902/d5aeffb2-95c1-4468-905d-9183d6734032)
-
 Egy-Crack is a powerful Ethereum address generator that allows you to generate Ethereum addresses and check for matches against a provided list of addresses. It is designed to be fast, efficient, and easy to use.
 
 ## Features
