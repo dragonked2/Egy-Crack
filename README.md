@@ -1,6 +1,7 @@
 Egy-Crack
 
-![image](https://github.com/dragonked2/Egy-Crack/assets/66541902/a47b8748-583a-4f7d-8bb6-d7a2265b2365)
+
+![Untitled](https://github.com/dragonked2/Egy-Crack/assets/66541902/c3360819-089f-48aa-99b0-5a5561a75a34)
 
 # Egy-Crack
 Egy-Crack is a powerful Ethereum address generator that allows you to generate Ethereum addresses and check for matches against a provided list of addresses. It is designed to be fast, efficient, and easy to use.
@@ -9,8 +10,7 @@ Egy-Crack is a powerful Ethereum address generator that allows you to generate E
 
 - Generate Ethereum addresses from private keys
 - Check for matches against a list of Ethereum addresses
-- Sequential or random mode for private key generation
-- Discord webhook integration for real-time notifications
+- random mode for private key generation
 - Progress tracking with a user-friendly progress bar
 - Outputs matches to a file for easy reference
 
@@ -36,7 +36,7 @@ Egy-Crack is a powerful Ethereum address generator that allows you to generate E
 
 ## Usage
 
-1. Update the `success.txt` file with the list of Ethereum addresses you want to check against.
+1. Update the `sucess.txt` file with the list of Ethereum addresses you want to check against.
 
 2. Run the script with the following command:
 
@@ -46,8 +46,10 @@ Egy-Crack is a powerful Ethereum address generator that allows you to generate E
 
    The script will start generating Ethereum addresses and checking for matches. Matches will be displayed in the console and saved to the `matches.txt` file.
 
-3. Monitor the progress with the progress bar and receive real-time notifications through the configured Discord webhook.
-![image](https://github.com/dragonked2/Egy-Crack/assets/66541902/cf66786e-23c4-432c-a870-d438d07711ee)
+3. Monitor the progress with the progress bar and receive real-time notifications
+
+![Untitled](https://github.com/dragonked2/Egy-Crack/assets/66541902/6d68f084-a185-4778-87d9-97c42c7a4278)
+
 
 ## How to Contribute
 
