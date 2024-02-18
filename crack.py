@@ -1,52 +1,72 @@
 from eth_account import Account
-import signal
 import os
-from pybloom_live import BloomFilter
+import sys
+from secrets import token_bytes
+from tqdm import tqdm
+import math
 
-def load_target_addresses(file_path):
-    target_addresses = BloomFilter(capacity=990000000, error_rate=0.001)
+def generate_ethereum_wallet(existing_addresses):
+    while True:
+        private_key = token_bytes(32).hex()
+        account = Account.from_key(private_key)
+        address = account.address.lower()[2:]
+        if address not in existing_addresses:
+            existing_addresses.add(address)
+            return address, private_key
 
-    if file_path and os.path.exists(file_path):
-        with open(file_path, 'r') as file:
-            for line in file:
-                address = line.strip().lower()  # Convert to lowercase
-                if address.startswith("0x"):
-                    target_addresses.add(address[2:])  # Exclude "0x" prefix
-
-    return target_addresses
-
-def generate_ethereum_address(target_addresses=None, output_file_path=None):
+def load_addresses(filename="first_half1.txt"):
+    addresses_set = set()
     try:
-        while True:
-            # Generate a new Ethereum account
-            account = Account.create()
+        print(f"Loading addresses from {filename}...")
+        with open(filename, "r", encoding="latin-1") as file:
+            addresses_set.update(line.strip().lower() for line in file)
+    except (UnicodeDecodeError, FileNotFoundError) as e:
+        print(f"Error loading addresses from {filename}: {e}")
+        sys.exit(1)
+    return addresses_set
 
-            # Extract the address and private key
-            address = account.address[2:].lower()  # Exclude "0x" prefix and convert to lowercase
-            private_key = account._private_key.hex()
+def check_and_save_match(formatted_address, private_key, output_filename="matches.txt"):
+    with open(output_filename, "a", encoding="utf-8") as output_file:
+        output_file.write(f"Match Found\n"
+                          f"  Address: {formatted_address}\n"
+                          f"  Private Key: {private_key}\n\n")
 
-            print("Ethereum Address:", address)
-            print("Private Key:", private_key)
+def generate_and_check_addresses(args, max_matches=10):
+    addresses_set, existing_addresses = args
+    matches_found = 0
+    try:
+        with tqdm(desc="Processing", unit=" address", ncols=100, dynamic_ncols=True) as progress_bar:
+            speed_multiplier = math.sqrt(len(addresses_set))  # Adjust speed based on the number of loaded addresses
+            while matches_found < max_matches:
+                formatted_address, private_key = generate_ethereum_wallet(existing_addresses)
 
-            # Check for a match using the Bloom filter
-            if target_addresses and address in target_addresses:
-                print("Match found for target address. Saving results to file...")
-                save_results_to_file(output_file_path, address, private_key)
+                # Add additional actions if needed
+                if formatted_address in addresses_set:
+                    check_and_save_match(formatted_address, private_key)
+                    matches_found += 1
 
-            print()
+                progress_bar.update(speed_multiplier)  # Update progress bar with adjusted speed
 
     except KeyboardInterrupt:
-        print("\nScript interrupted. Exiting gracefully.")
+        print("\nScript stopped by the user.")
+        sys.exit(0)
 
-def save_results_to_file(output_file_path, address, private_key):
-    with open(output_file_path, 'a') as results_file:
-        results_file.write(f"Address: {address}, Private Key: {private_key}\n")
+def main():
+    addresses_set = load_addresses()
+    if not addresses_set:
+        print("No addresses loaded. Exiting.")
+        sys.exit(1)
+
+    print(f"Loaded {len(addresses_set)} addresses from the file.")
+
+    try:
+        existing_addresses = set()
+        args = (addresses_set, existing_addresses)
+        generate_and_check_addresses(args)
+
+    except KeyboardInterrupt:
+        print("\nScript stopped by the user.")
+        sys.exit(0)
 
 if __name__ == "__main__":
-    target_addresses = load_target_addresses("address.txt")
-    output_file_path = "match_results.txt"
-
-    # Handle graceful termination on CTRL+C
-    signal.signal(signal.SIGINT, lambda signal, frame: exit())
-
-    generate_ethereum_address(target_addresses, output_file_path)
+    main()
